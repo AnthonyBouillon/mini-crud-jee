@@ -18,10 +18,26 @@
             </tr>
         </thead>
         <tbody>
-            <%  List<Users> list = (List<Users>) request.getAttribute("list");
+            <%  
+                /**
+                 * Browse the list of users,
+                 * The update button redirects to the edit page
+                 */
+                List<Users> list = (List<Users>) request.getAttribute("list");
                 for (Users users : list) {
-                    out.println("<tr><td>" + users.getId() + "</td><td>" + users.getName() + "</td><td>" + users.getPassword() + "</td><td>" + users.getEmail() + "</td><td>" + users.getSex() + "</td><td>" + users.getCountry() + "</td><td><a href='Servlet?get_id="+ users.getId() + "' class='btn btn-secondary'>Modifier</a></td><td><form method='post' action='Servlet'><input type='hidden' name='id' value='"+ users.getId() +"'><button type='submit' name='delete' class='btn btn-warning'>Supprimer</button></form></td></tr>");
-                }%>
+                    out.println(
+                            "<tr>"
+                            + "<td>" + users.getId() + "</td>"
+                            + "<td>" + users.getName() + "</td>"
+                            + "<td>" + users.getPassword() + "</td>"
+                            + "<td>" + users.getEmail() + "</td>"
+                            + "<td>" + users.getSex() + "</td>"
+                            + "<td>" + users.getCountry() + "</td>"
+                            + "<td><a href='Servlet?get_id=" + users.getId() + "' class='btn btn-secondary'>Modifier</a></td>"
+                            + "<td><form method='post' action='Servlet'><input type='hidden' name='id' value='" + users.getId() + "'><button type='submit' name='delete' class='btn btn-warning'>Supprimer</button></form></td>"
+                            + "</tr>");
+                }
+            %>
         </tbody>
     </table>
 </div>

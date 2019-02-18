@@ -69,6 +69,23 @@ public class Users_crud extends Database {
         return users;
     }
      
+    public Users getLogin(String email) throws SQLException{
+        String sql = "SELECT * FROM users WHERE email = ?";
+        Connection con = (Connection) Database.getConnection();
+        PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
+        ps.setString(1, email);
+        ResultSet rs = ps.executeQuery();
+        if(rs.next()){
+            users.setId(rs.getInt("id"));
+            users.setName(rs.getString("name"));
+            users.setPassword(rs.getString("password"));
+            users.setEmail(rs.getString("email"));
+            users.setSex(rs.getString("sex"));
+            users.setCountry(rs.getString("country"));
+        }
+        return users;
+    }
+     
     public void update(Users users) throws SQLException {
         String sql = "UPDATE users SET name = ?, password = ?, email = ?, sex = ?, country = ? WHERE id = ?";
         Connection con = (Connection) Database.getConnection();

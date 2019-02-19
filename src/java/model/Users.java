@@ -1,8 +1,8 @@
 package model;
 
-
 public class Users {
 
+    // Attribute corresponding to the database fields
     private Integer id = 0;
     private String name = "";
     private String password = "";
@@ -10,6 +10,9 @@ public class Users {
     private String sex = "";
     private String country = "";
 
+    // -------------------------------------------------------------------------
+    //                          GETTERS AND SETTERS
+    // -------------------------------------------------------------------------
     public Integer getId() {
         return this.id;
     }

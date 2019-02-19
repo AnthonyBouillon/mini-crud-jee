@@ -23,7 +23,7 @@
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
                     <!-- The links are displayed if the user is logged in -->
-                    <a href="ajouter.jsp" class="nav-item nav-link">Add Users</a>
+                    
                     <%
                         if (session.getAttribute("session_username") != null) {
                     %>
@@ -32,6 +32,7 @@
                     <%
                         } else {
                     %>
+                    <a href="ajouter.jsp" class="nav-item nav-link">Add Users</a>
                     <a href="login.jsp" class="nav-item nav-link">Sign in</a>
                     <%
                         }

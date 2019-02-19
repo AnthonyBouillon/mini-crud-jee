@@ -13,7 +13,6 @@ import javax.servlet.http.HttpSession;
 
 import model.Users;
 import dao.Users_crud;
-import static java.lang.Integer.parseInt;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -53,74 +52,77 @@ public class Servlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String add = request.getParameter("add");
+        String delete = request.getParameter("delete");
+        String edit = request.getParameter("edit");
         String login = request.getParameter("sign_in");
+        String add = request.getParameter("add");
+
         /**
-         * Modification d'utilisateur
+         * Si l'utilisateur a soumis le formulaire d'inscription, redirection
+         * vers la page de connexion
+         */
+        if (add != null) {
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/login.jsp");
+            dispatcher.forward(request, response);
+        }
+
+        /**
+         * Si l'utilisateur à soumis le formulaire de connexion et que c'est
+         * correct, redirection vers la liste des utilisateurs
+         */
+        if (login != null) {
+            // Données du formulaire
+            String email = request.getParameter("email");
+            String password = request.getParameter("password");
+            try {
+                // Récupère les informations de l'utilisateur via son email
+                users = users_crud.getLogin(email);
+                // Si l'email existe et que le mot de passe correspond => session + redirection avec liste 
+                if (users.getEmail() != null && users.getPassword() != null && users.getPassword().equals(password)) {
+                    HttpSession session_username = request.getSession();
+                    String username = users.getName();
+                    session_username.setAttribute("session_username", username);
+                    List<Users> list = users_crud.read();
+                    request.setAttribute("list", list);
+                    RequestDispatcher dispatcher = request.getRequestDispatcher("/viewusers.jsp");
+                    dispatcher.forward(request, response);
+                } else {
+                    HttpServletResponse httpResponse = (HttpServletResponse) response;
+                    httpResponse.sendRedirect("login.jsp");
+                }
+            } catch (SQLException ex) {
+                System.out.println(ex.getMessage());
+            }
+        }
+        
+        /**
+         * Si l'url contient l'identifiant de l'utilisateur => récupération de
+         * ses données + redirection vers le formulaire de modification
          */
         if (request.getParameter("get_id") != null) {
-            int site_id = Integer.parseInt(request.getParameter("get_id"));
-            if (site_id > 0) {
-                try {
-                    users = users_crud.readById(site_id);
-                    request.setAttribute("users", users);
-                } catch (SQLException ex) {
-                    Logger.getLogger(Servlet.class.getName()).log(Level.SEVERE, null, ex);
-                }
+            int id_url = Integer.parseInt(request.getParameter("get_id"));
+            try {
+                users = users_crud.readById(id_url);
+                request.setAttribute("users", users);
                 RequestDispatcher dispatcher = request.getRequestDispatcher("/editform.jsp");
                 dispatcher.forward(request, response);
-
+            } catch (SQLException ex) {
+                System.out.println(ex.getMessage());
             }
         }
 
-        //if the form add is not submitted
-        if (add == null && login == null) {
-            /**
-             * Display user list
-             */
+        // Si il a juste cliquer sur le lien pour voir la liste => chargement de la liste 
+        if (add == null && edit == null && login == null && delete == null) {
             try {
                 List<Users> list = users_crud.read();
                 request.setAttribute("list", list);
                 RequestDispatcher dispatcher = request.getRequestDispatcher("/viewusers.jsp");
                 dispatcher.forward(request, response);
             } catch (SQLException ex) {
-                Logger.getLogger(Servlet.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            // TODO Auto-generated catch block
-        }
-        if (login != null) {
-            String email = request.getParameter("email");
-            String password = request.getParameter("password");
-            try {
-                users = users_crud.getLogin(email);
-                if (users.getEmail() != null) {
-                    if (users.getPassword() != null) {
-                        if (users.getPassword().equals(password)) {
-                            HttpSession session_username = request.getSession();
-                            String username = users.getName();
-                            session_username.setAttribute("session_username", username);
-                            try {
-                                List<Users> list = users_crud.read();
-                                request.setAttribute("list", list);
-                                RequestDispatcher dispatcher = request.getRequestDispatcher("/viewusers.jsp");
-                                dispatcher.forward(request, response);
-                            } catch (SQLException ex) {
-                                Logger.getLogger(Servlet.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                        } else {
-                            HttpServletResponse httpResponse = (HttpServletResponse) response;
-                            httpResponse.sendRedirect("login.jsp");
-                        }
-                    }
-                } else {
-                    HttpServletResponse httpResponse = (HttpServletResponse) response;
-                    httpResponse.sendRedirect("login.jsp");
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(Servlet.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println(ex.getMessage());
             }
         }
-
+        
     }
 
     /**
@@ -137,7 +139,6 @@ public class Servlet extends HttpServlet {
         String add = request.getParameter("add");
         String delete = request.getParameter("delete");
         String edit = request.getParameter("edit");
-        String login = request.getParameter("sign_in");
         //if the form is submitted
         if (add != null) {
             // Retrieves data from fields
@@ -156,18 +157,24 @@ public class Servlet extends HttpServlet {
             try {
                 users_crud.create(users);
                 HttpServletResponse httpResponse = (HttpServletResponse) response;
-                httpResponse.sendRedirect("ajouter.jsp");
+                httpResponse.sendRedirect("login.jsp");
             } catch (SQLException e) {
                 e.getMessage();
             }
         } else if (delete != null) {
             String id = request.getParameter("id");
             users_crud.delete(Integer.parseInt(id));
-            HttpServletResponse httpResponse = (HttpServletResponse) response;
-            httpResponse.sendRedirect("Servlet");
-
+            try {
+                users_crud.update(users);
+                List<Users> list = users_crud.read();
+                request.setAttribute("list", list);
+                RequestDispatcher dispatcher = request.getRequestDispatcher("/viewusers.jsp");
+                dispatcher.forward(request, response);
+            } catch (SQLException ex) {
+                System.out.println(ex.getMessage());
+            }
         } else if (edit != null) {
-            int site_id = Integer.parseInt(request.getParameter("id"));
+            int id_url = Integer.parseInt(request.getParameter("id"));
             String name = request.getParameter("name");
             String password = request.getParameter("password");
             String email = request.getParameter("email");
@@ -176,18 +183,22 @@ public class Servlet extends HttpServlet {
 
             // Define the fields in the Setter
             // Id inconnu
-            users.setId(site_id);
+            users.setId(id_url);
             users.setName(name);
             users.setPassword(password);
             users.setEmail(email);
             users.setSex(sex);
             users.setCountry(country);
-
             try {
                 users_crud.update(users);
+                List<Users> list = users_crud.read();
+                request.setAttribute("list", list);
+                RequestDispatcher dispatcher = request.getRequestDispatcher("/viewusers.jsp");
+                dispatcher.forward(request, response);
             } catch (SQLException ex) {
-                Logger.getLogger(Servlet.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println(ex.getMessage());
             }
+
         }
 
     }

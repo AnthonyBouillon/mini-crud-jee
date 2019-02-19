@@ -7,7 +7,9 @@ import java.sql.SQLException;
 public class Database {
 
     private static Connection connection;
-
+    /**
+     * Connection to the database
+     */
     static {
         try {
             Class.forName("com.mysql.jdbc.Driver");
@@ -16,7 +18,10 @@ public class Database {
             e.getMessage();
         }
     }
-
+    /**
+     * Retrieves a connection object
+     * @return 
+     */
     public static Connection getConnection() {
         return connection;
     }

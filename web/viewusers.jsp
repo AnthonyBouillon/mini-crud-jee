@@ -1,5 +1,10 @@
 <%@include file="template/header.jsp" %>
-
+<%  
+    if (session.getAttribute("session_username") == null) {
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/ajouter.jsp");
+        dispatcher.forward(request, response);
+    }
+%>
 <div class="jumbotron">
     <h1 class="text-center">Users List</h1>  
 </div>

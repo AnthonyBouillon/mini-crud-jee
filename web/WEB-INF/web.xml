@@ -12,9 +12,5 @@
         <servlet-name>Selvet</servlet-name>
         <url-pattern>/Selvet</url-pattern>
     </servlet-mapping>
-    <session-config>
-        <session-timeout>
-            30
-        </session-timeout>
-    </session-config>
+
 </web-app>

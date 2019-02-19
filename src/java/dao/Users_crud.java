@@ -12,6 +12,11 @@ import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.PreparedStatement;
 import com.mysql.jdbc.Statement;
 
+/**
+ * This class inherits the database class Contains the crud from the Users table
+ *
+ * @author 80010-37-15
+ */
 public class Users_crud extends Database {
 
     Users users;
@@ -20,6 +25,12 @@ public class Users_crud extends Database {
         users = new Users();
     }
 
+    /**
+     * Create a user
+     *
+     * @param users
+     * @throws SQLException
+     */
     public void create(Users users) throws SQLException {
         String sql = "INSERT INTO users (name, password, email, sex, country) VALUES (?, ?, ?, ?, ?)";
         Connection con = (Connection) Database.getConnection();
@@ -32,6 +43,12 @@ public class Users_crud extends Database {
         ps.execute();
     }
 
+    /**
+     * Return a user list
+     *
+     * @return
+     * @throws SQLException
+     */
     public List<Users> read() throws SQLException {
         List<Users> list = new ArrayList<>();
         String sql = "SELECT * FROM users";
@@ -52,13 +69,20 @@ public class Users_crud extends Database {
 
     }
 
-     public Users readById(int id) throws SQLException {
+    /**
+     * Find a user
+     *
+     * @param id
+     * @return
+     * @throws SQLException
+     */
+    public Users readById(int id) throws SQLException {
         String sql = "SELECT * FROM users WHERE id = ?";
         Connection con = (Connection) Database.getConnection();
         PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
         ps.setInt(1, id);
         ResultSet rs = ps.executeQuery();
-        if(rs.next()){
+        if (rs.next()) {
             users.setId(rs.getInt("id"));
             users.setName(rs.getString("name"));
             users.setPassword(rs.getString("password"));
@@ -68,14 +92,21 @@ public class Users_crud extends Database {
         }
         return users;
     }
-     
-    public Users getLogin(String email) throws SQLException{
+
+    /**
+     * Retrieves a user's password via email
+     *
+     * @param email
+     * @return
+     * @throws SQLException
+     */
+    public Users getLogin(String email) throws SQLException {
         String sql = "SELECT * FROM users WHERE email = ?";
         Connection con = (Connection) Database.getConnection();
         PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
         ps.setString(1, email);
         ResultSet rs = ps.executeQuery();
-        if(rs.next()){
+        if (rs.next()) {
             users.setId(rs.getInt("id"));
             users.setName(rs.getString("name"));
             users.setPassword(rs.getString("password"));
@@ -85,7 +116,13 @@ public class Users_crud extends Database {
         }
         return users;
     }
-     
+
+    /**
+     * Update a user
+     *
+     * @param users
+     * @throws SQLException
+     */
     public void update(Users users) throws SQLException {
         String sql = "UPDATE users SET name = ?, password = ?, email = ?, sex = ?, country = ? WHERE id = ?";
         Connection con = (Connection) Database.getConnection();
@@ -99,6 +136,11 @@ public class Users_crud extends Database {
         ps.execute();
     }
 
+    /**
+     * Delete a user
+     *
+     * @param id
+     */
     public void delete(int id) {
         String sql = "DELETE FROM users WHERE id = ?";
         Connection con = (Connection) Database.getConnection();

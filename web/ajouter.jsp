@@ -1,5 +1,11 @@
 <%@include file="template/header.jsp" %>
-
+<% 
+    // If the user is logged in => redirection to the list page
+    if (session.getAttribute("session_username") != null) {
+        RequestDispatcher dispatcher = request.getRequestDispatcher("Servlet");
+        dispatcher.forward(request, response);
+    }
+%>
 <div class="jumbotron">
     <h1 class="text-center">Add New User</h1> 
 </div>

@@ -5,13 +5,14 @@
 </div>
 <div class="container">
     <%        
+        // If the user is not logged in => redicrection to the registration page
         if (session.getAttribute("session_username") == null) {
             RequestDispatcher dispatcher = request.getRequestDispatcher("/ajouter.jsp");
             dispatcher.forward(request, response);
         }
         /**
          * Destroy the sessions, redirects (with s "redirige" without
-         * "rediriger" to the login page
+         * "rediriger") to the login page
          */
         session.invalidate();
         HttpServletResponse httpResponse = (HttpServletResponse) response;

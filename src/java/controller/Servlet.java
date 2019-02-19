@@ -14,11 +14,9 @@ import javax.servlet.http.HttpSession;
 import model.Users;
 import dao.Users_crud;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
- * Servlet implementation class Servlet
+ * Servlet implementation class Servlet WebServlet => It is necessary
  */
 @WebServlet("/Servlet")
 public class Servlet extends HttpServlet {
@@ -52,53 +50,20 @@ public class Servlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        // Corresponds to the form button
         String delete = request.getParameter("delete");
         String edit = request.getParameter("edit");
         String login = request.getParameter("sign_in");
         String add = request.getParameter("add");
 
-        /**
-         * Si l'utilisateur a soumis le formulaire d'inscription, redirection
-         * vers la page de connexion
-         */
+        // If user has click on the button on form "add" => redirection to the login page
         if (add != null) {
             RequestDispatcher dispatcher = request.getRequestDispatcher("/login.jsp");
             dispatcher.forward(request, response);
         }
 
-        /**
-         * Si l'utilisateur à soumis le formulaire de connexion et que c'est
-         * correct, redirection vers la liste des utilisateurs
-         */
-        if (login != null) {
-            // Données du formulaire
-            String email = request.getParameter("email");
-            String password = request.getParameter("password");
-            try {
-                // Récupère les informations de l'utilisateur via son email
-                users = users_crud.getLogin(email);
-                // Si l'email existe et que le mot de passe correspond => session + redirection avec liste 
-                if (users.getEmail() != null && users.getPassword() != null && users.getPassword().equals(password)) {
-                    HttpSession session_username = request.getSession();
-                    String username = users.getName();
-                    session_username.setAttribute("session_username", username);
-                    List<Users> list = users_crud.read();
-                    request.setAttribute("list", list);
-                    RequestDispatcher dispatcher = request.getRequestDispatcher("/viewusers.jsp");
-                    dispatcher.forward(request, response);
-                } else {
-                    HttpServletResponse httpResponse = (HttpServletResponse) response;
-                    httpResponse.sendRedirect("login.jsp");
-                }
-            } catch (SQLException ex) {
-                System.out.println(ex.getMessage());
-            }
-        }
-        
-        /**
-         * Si l'url contient l'identifiant de l'utilisateur => récupération de
-         * ses données + redirection vers le formulaire de modification
-         */
+        // If the url countains the user id => data recovery + redirection to the modification form
         if (request.getParameter("get_id") != null) {
             int id_url = Integer.parseInt(request.getParameter("get_id"));
             try {
@@ -111,7 +76,7 @@ public class Servlet extends HttpServlet {
             }
         }
 
-        // Si il a juste cliquer sur le lien pour voir la liste => chargement de la liste 
+        // If he just clicked on the link to see the list => loading the list
         if (add == null && edit == null && login == null && delete == null) {
             try {
                 List<Users> list = users_crud.read();
@@ -122,7 +87,7 @@ public class Servlet extends HttpServlet {
                 System.out.println(ex.getMessage());
             }
         }
-        
+
     }
 
     /**
@@ -135,10 +100,16 @@ public class Servlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        // Liaison entre get et post => necessary
         doGet(request, response);
+
+        // Corresponds to the form button
         String add = request.getParameter("add");
         String delete = request.getParameter("delete");
         String edit = request.getParameter("edit");
+        String login = request.getParameter("sign_in");
+
         //if the form is submitted
         if (add != null) {
             // Retrieves data from fields
@@ -156,11 +127,16 @@ public class Servlet extends HttpServlet {
             // Try insert into database
             try {
                 users_crud.create(users);
+                // Redirect to the login page
                 HttpServletResponse httpResponse = (HttpServletResponse) response;
                 httpResponse.sendRedirect("login.jsp");
             } catch (SQLException e) {
                 e.getMessage();
             }
+            /**
+             * If delete is submitted => calls the method of deleting a user
+             * reloading the user list
+             */
         } else if (delete != null) {
             String id = request.getParameter("id");
             users_crud.delete(Integer.parseInt(id));
@@ -173,6 +149,10 @@ public class Servlet extends HttpServlet {
             } catch (SQLException ex) {
                 System.out.println(ex.getMessage());
             }
+            /**
+             * Retrieves data from fields and url Define the fields in the
+             * Setter Tries to modify a user and then reloads the list
+             */
         } else if (edit != null) {
             int id_url = Integer.parseInt(request.getParameter("id"));
             String name = request.getParameter("name");
@@ -181,14 +161,13 @@ public class Servlet extends HttpServlet {
             String sex = request.getParameter("sex");
             String country = request.getParameter("country");
 
-            // Define the fields in the Setter
-            // Id inconnu
             users.setId(id_url);
             users.setName(name);
             users.setPassword(password);
             users.setEmail(email);
             users.setSex(sex);
             users.setCountry(country);
+
             try {
                 users_crud.update(users);
                 List<Users> list = users_crud.read();
@@ -198,7 +177,35 @@ public class Servlet extends HttpServlet {
             } catch (SQLException ex) {
                 System.out.println(ex.getMessage());
             }
-
+            /**
+             * If the user has submitted the login form and it is correct =>
+             * redirection to the user list
+             */
+        } else if (login != null) {
+            // Data from fields
+            String email = request.getParameter("email");
+            String password = request.getParameter("password");
+            try {
+                // Retrieves data user's via email
+                users = users_crud.getLogin(email);
+                // If the email exist and the password matches => session + redirection with list
+                if (users.getEmail() != null && users.getPassword() != null && users.getPassword().equals(password)) {
+                    // Session
+                    HttpSession session_username = request.getSession();
+                    String username = users.getName();
+                    session_username.setAttribute("session_username", username);
+                    // Reloading to the user list
+                    List<Users> list = users_crud.read();
+                    request.setAttribute("list", list);
+                    RequestDispatcher dispatcher = request.getRequestDispatcher("/viewusers.jsp");
+                    dispatcher.forward(request, response);
+                } else {
+                    HttpServletResponse httpResponse = (HttpServletResponse) response;
+                    httpResponse.sendRedirect("login.jsp");
+                }
+            } catch (SQLException ex) {
+                System.out.println(ex.getMessage());
+            }
         }
 
     }

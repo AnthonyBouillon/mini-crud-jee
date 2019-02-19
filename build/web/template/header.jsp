@@ -27,13 +27,13 @@
                     <%
                         if (session.getAttribute("session_username") != null) {
                     %>
-                    <a href="Servlet" class="nav-item nav-link">View All Records</a>
-                    <a href="logout.jsp" class="nav-item nav-link">Logout</a> 
+                            <a href="Servlet" class="nav-item nav-link">View All Records</a>
+                            <a href="logout.jsp" class="nav-item nav-link">Logout</a> 
                     <%
                         } else {
                     %>
-                    <a href="ajouter.jsp" class="nav-item nav-link">Add Users</a>
-                    <a href="login.jsp" class="nav-item nav-link">Sign in</a>
+                            <a href="ajouter.jsp" class="nav-item nav-link">Add Users</a>
+                            <a href="login.jsp" class="nav-item nav-link">Sign in</a>
                     <%
                         }
                     %>

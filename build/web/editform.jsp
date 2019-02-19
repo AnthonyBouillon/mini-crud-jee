@@ -1,5 +1,6 @@
 <%@include file="template/header.jsp" %>
 <%    
+    // If the user is not logged in => redirection to the registration page
     if (session.getAttribute("session_username") == null) {
         RequestDispatcher dispatcher = request.getRequestDispatcher("/ajouter.jsp");
         dispatcher.forward(request, response);
@@ -39,18 +40,18 @@
                  */
                 if (users.getSex() != null && users.getSex().equals("Male")) {
             %>
-            <input type="radio" name="sex" id="male" value="Male" checked><label for="male">&nbsp;Male</label>
-            <input type="radio" name="sex" id="female" value="Female"><label for="female">&nbsp;Female</label>
+                    <input type="radio" name="sex" id="male" value="Male" checked><label for="male">&nbsp;Male</label>
+                    <input type="radio" name="sex" id="female" value="Female"><label for="female">&nbsp;Female</label>
             <%
-            } else if (users.getSex() != null && users.getSex().equals("Female")) {
+                } else if (users.getSex() != null && users.getSex().equals("Female")) {
             %>
-            <input type="radio" name="sex" id="male" value="Male"><label for="male">&nbsp;Male</label>
-            <input type="radio" name="sex" id="female" value="Female" checked><label for="female">&nbsp;Female</label>
+                    <input type="radio" name="sex" id="male" value="Male"><label for="male">&nbsp;Male</label>
+                    <input type="radio" name="sex" id="female" value="Female" checked><label for="female">&nbsp;Female</label>
             <%
-            } else {
+                } else {
             %>
-            <input type="radio" name="sex" id="male" value="Male"><label for="male">&nbsp;Male</label>
-            <input type="radio" name="sex" id="female" value="Female" checked><label for="female">&nbsp;Female</label>
+                    <input type="radio" name="sex" id="male" value="Male"><label for="male">&nbsp;Male</label>
+                    <input type="radio" name="sex" id="female" value="Female" checked><label for="female">&nbsp;Female</label>
             <%
                 }
             %>

@@ -128,8 +128,7 @@ public class Servlet extends HttpServlet {
             try {
                 users_crud.create(users);
                 // Redirect to the login page
-                HttpServletResponse httpResponse = (HttpServletResponse) response;
-                httpResponse.sendRedirect("login.jsp");
+                response.sendRedirect("login.jsp");
             } catch (SQLException e) {
                 e.getMessage();
             }
@@ -189,7 +188,8 @@ public class Servlet extends HttpServlet {
                 // Retrieves data user's via email
                 users = users_crud.getLogin(email);
                 // If the email exist and the password matches => session + redirection with list
-                if (users.getEmail() != null && users.getPassword() != null && users.getPassword().equals(password)) {
+                if (users.getEmail() != null && users.getPassword() != null && users.getPassword().equals(password) && email != null && password != null) {
+                  
                     // Session
                     HttpSession session_username = request.getSession();
                     String username = users.getName();
@@ -200,8 +200,7 @@ public class Servlet extends HttpServlet {
                     RequestDispatcher dispatcher = request.getRequestDispatcher("/viewusers.jsp");
                     dispatcher.forward(request, response);
                 } else {
-                    HttpServletResponse httpResponse = (HttpServletResponse) response;
-                    httpResponse.sendRedirect("login.jsp");
+                    response.sendRedirect("login.jsp");
                 }
             } catch (SQLException ex) {
                 System.out.println(ex.getMessage());
